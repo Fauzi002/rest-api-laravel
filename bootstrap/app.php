@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\PemilikKomentar;
 use App\Http\Middleware\PemilikPostingan;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,7 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append(PemilikPostingan::class);
+        // $middleware->append(PemilikPostingan::class);
+        // $middleware->append(PemilikKomentar::class);
+
+        $middleware->alias([
+            'PemilikKomentar' => PemilikKomentar::class,
+            'PemilikPostingan' => PemilikPostingan::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -17,7 +17,13 @@ class PemilikPostingan
      */
     public function handle(Request $request, Closure $next)
     {
-        
+        $currentUser = Auth::user();
+        $post = Post::findOrFail($request->id);
+        // return response()->json($post);
+        if($post->author != $currentUser->id){
+            return response()->json(['message' => 'data not found'], 404);
+        }
+
             // dd('ini middleware baru');
         return $next($request);
     }

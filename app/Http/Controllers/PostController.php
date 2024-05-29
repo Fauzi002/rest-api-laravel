@@ -14,13 +14,13 @@ class PostController extends Controller
     {
         $posts = Post::all();
         // return response()->json(['data' => $posts]);
-        return PostDetailResource::collection($posts->loadMissing('writer:id,name'));
+        return PostDetailResource::collection($posts->loadMissing(['writer:id,name', 'comments:id,post_id,user_id,comments_content']));
     }
 
     public function show($id)
     {
         $post = Post::with('writer:id,name')->findOrFail($id);
-        return new PostDetailResource($post);
+        return new PostDetailResource($post->loadMissing(['writer:id,name', 'comments:id,post_id,user_id,comments_content']));
     }
 
     public function store(Request $request)
@@ -37,13 +37,6 @@ class PostController extends Controller
 
     public function update(Request $request, $id)
     {
-        $currentUser = Auth::user();
-        $post = Post::find($request->id);
-        // return response()->json($post);
-        if($post->author != $currentUser->id){
-            return response()->json(['message' => 'data not found'], 404);
-        }
-
         $validated = $request->validate([
             'title' => 'required|max:255',
             'news_content' => 'required',
